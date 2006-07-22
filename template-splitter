@@ -1,4 +1,6 @@
-#!/usr/bin/python
+#!__PYTHON_INTERPRETER__
+-*- mode: python -*-
+
 """\
 Splitter Backup System of Doom
 (c) 2006 Michael D. Labriola <mdlabriola@yahoo.com>

@@ -49,7 +49,7 @@ ${BIN}: template-${BIN} ${MAKEFILE}
 	@echo "LIBDIR: ${LIBDIR}"
 	@echo "PYTHON: ${PYTHON}"
 	sed "s|LIBDIR = \"\"|LIBDIR = \"${LIBDIR}\"|" template-${BIN} > ${BIN}
-	sed -i "s|__PYTHON_INTERPRETER__|#!${PYTHON}|" ${BIN}
+	sed -i "s|__PYTHON_INTERPRETER__|${PYTHON}|" ${BIN}
 	chmod 755 ${BIN}
 
 config.py: template-config.py ${MAKEFILE}
