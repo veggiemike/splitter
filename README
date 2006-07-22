@@ -1,0 +1,16 @@
+Splitter Backup System of Doom
+(c) 2006 Michael D. Labriola <mdlabriola@yahoo.com>
+
+The Splitter Backup System is designed to prepare TAR archives to be burned to
+DVD media.  Currently, the maximum file size of an ISO9660 file system is
+exactly 2G (2^31 bytes).  Splitter will traverse it's provided list of file
+system nodes, creating TAR files no bigger than this limit.  Then you can
+simply collect however many of these TAR files fit on your media (DVDs are
+around 4.5G and DVD-dl are around 8.2G) into an ISO file using 'mkisofs' and
+burn away.
+
+Splitter is written in Python, so it should be relatively easy to port
+to other *nix systems.
+
+Requires:
+  Python >= 2.3

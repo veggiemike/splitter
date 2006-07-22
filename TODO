@@ -1,0 +1,15 @@
+planned features
+
+
+## 0.8.0
+- mostly feature complete
+
+
+## 0.9.0
+- command line options using getopt
+
+
+## 1.0.0
+- config file (using ConfigParser or a .py file)
+
+

@@ -1,0 +1,3 @@
+edit the values in Makefile accordingly and then:
+
+make && make install
