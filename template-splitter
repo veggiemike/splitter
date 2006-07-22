@@ -1,5 +1,5 @@
 #!__PYTHON_INTERPRETER__
--*- mode: python -*-
+#-*- mode: python -*-
 
 """\
 Splitter Backup System of Doom
@@ -91,8 +91,7 @@ try:
     utils.vprint("args: %s" % args)
     
     if not opts:
-	usage("invalid usage")
-        sys.exit(1)
+	raise Exception("invalid usage")
 
 except Exception, e:
     usage(e)

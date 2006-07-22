@@ -3,7 +3,7 @@ MAKEFILE = Makefile
 PRODUCT	      =	splitter
 VERSION	      =	0.8.0
 PACKAGEREV    =	1
-DEVTAG	      =	cvs
+DEVTAG	      =	pre
 DEVDATE	      =	`date +"%Y%m%d"`
 
 ifeq (${DEVTAG},)
@@ -37,13 +37,13 @@ LIBS =	config.py \
 MAN = 	splitter.8
 
 
-# stuff that should be handled via a site-config in /etc.  these are quoted
-# python constructs.
-SIZE_LIMIT = "2**31"
-NODE_LIST = "['/scrap', '/home']"
+# stuff that should be handled via a site-config in /etc.  these are python
+# constructs.
+SIZE_LIMIT = 2**31
+NODE_LIST = ['/scrap', '/home']
 
 
-all: ${BIN} ${LIBS} ${MAN}.gz
+all: ${BIN} ${LIBS} #${MAN}.gz
 
 ${BIN}: template-${BIN} ${MAKEFILE}
 	@echo "LIBDIR: ${LIBDIR}"
@@ -56,6 +56,8 @@ config.py: template-config.py ${MAKEFILE}
 	@echo "VERSION: ${VERSION}"
 	@echo "DEVDATE: ${DEVDATE}"
 	@echo "VERSIONSTRING: ${VERSIONSTRING}"
+	@echo "SIZE_LIMIT: ${SIZE_LIMIT}"
+	@echo "NODE_LIST: ${NODE_LIST}"
 	sed "s|__VERSION__|${VERSIONSTRING}|" template-config.py > config.py
 	sed -i "s|__SIZE_LIMIT__|${SIZE_LIMIT}|" config.py
 	sed -i "s|__NODE_LIST__|${NODE_LIST}|" config.py
