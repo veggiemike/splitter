@@ -1,11 +1,15 @@
-SPLITTER_VER = "0.7.0"
+"""config-
+internal configuration library for splitter
+"""
 
-SIZE_LIMIT = 2**31
+#---------- compile-time configuration ---------------------------------------#
 
-NODE_LIST = ["/scrap", "/home"]
+VERSION = "__VERSION__"
+SIZE_LIMIT = __SIZE_LIMIT__
+NODE_LIST = __NODE_LIST__
 
 
-# runtime configuration
+#---------- run-time configuration -------------------------------------------#
 VERBOSE=False
 WAIT=False
 WAIT_AFTER=0
