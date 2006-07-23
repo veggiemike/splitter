@@ -40,6 +40,7 @@ MAN = 	splitter.8
 # stuff that should be handled via a site-config in /etc.  these are python
 # constructs.
 SIZE_LIMIT = 2**31
+INDEX_FILE = "index.db"
 NODE_LIST = ['/scrap', '/home']
 
 
@@ -48,7 +49,7 @@ all: ${BIN} ${LIBS} #${MAN}.gz
 ${BIN}: template-${BIN} ${MAKEFILE}
 	@echo "LIBDIR: ${LIBDIR}"
 	@echo "PYTHON: ${PYTHON}"
-	sed "s|LIBDIR = \"\"|LIBDIR = \"${LIBDIR}\"|" template-${BIN} > ${BIN}
+	sed "s|__LIBDIR__|${LIBDIR}|" template-${BIN} > ${BIN}
 	sed -i "s|__PYTHON_INTERPRETER__|${PYTHON}|" ${BIN}
 	chmod 755 ${BIN}
 
@@ -57,9 +58,13 @@ config.py: template-config.py ${MAKEFILE}
 	@echo "DEVDATE: ${DEVDATE}"
 	@echo "VERSIONSTRING: ${VERSIONSTRING}"
 	@echo "SIZE_LIMIT: ${SIZE_LIMIT}"
+	@echo "LIBDIR: ${LIBDIR}"
+	@echo "INDEX_FILE: ${INDEX_FILE}"
 	@echo "NODE_LIST: ${NODE_LIST}"
 	sed "s|__VERSION__|${VERSIONSTRING}|" template-config.py > config.py
 	sed -i "s|__SIZE_LIMIT__|${SIZE_LIMIT}|" config.py
+	sed -i "s|__LIBDIR__|${LIBDIR}|" config.py
+	sed -i "s|__INDEX_FILE__|${INDEX_FILE}|" config.py
 	sed -i "s|__NODE_LIST__|${NODE_LIST}|" config.py
 
 ${MAN}.gz: template-${MAN}

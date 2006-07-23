@@ -2,8 +2,8 @@
 #-*- mode: python -*-
 
 """\
-Splitter Backup System of Doom
-(c) 2006 Michael D. Labriola <mdlabriola@yahoo.com>
+Splitter Backup System
+(c) 2006 Michael D Labriola <mdlabriola@yahoo.com>
 
 The Splitter Backup System is designed to prepare TAR archives to be burned to
 DVD media.  Currently, the maximum file size of an ISO9660 file system is
@@ -13,24 +13,37 @@ simply collect however many of these TAR files fit on your media (DVDs are
 around 4.5G and DVD-dl are around 8.2G) into an ISO file using 'mkisofs' and
 burn away.
 
-Usage: splitter [MODE] [OPTION]...
+Usage: splitter [OPTION]...
+
+  --regen         Regenerate the index db stored in LIBDIR.  This will happen
+                  automatically if the db is older than the configured db
+                  lifespan or if the db doesn't exist yet.
+
+  --verbose       Turns on extra debuggin output.
+
+  --wait[=1]      Waits after the specified number of archives.  Defaults to 1.
+
+  --list[=all]    List available archives.  Default value (all) causes a brief
+                  summary listing.  Specifying an archive number will cause a
+                  detailed listing to be displayed.
+
+  --create[=all]  Create the specified archives.
 
 Examples:
-  splitter -r
-  splitter -l
-  splitter -l 1
-  splitter -c 1
-  splitter -c --wait=2
+  splitter --list              # List the archives (short listing)
+  splitter --list=1            # List the contents of archive #1
+  splitter --create=1          # Create archive #1
+  splitter --create --wait=2   # Create all archives, waiting after each 2
 """
 
 
 import sys
 import os
 import os.path
-import string
 import getopt
+import pickle
 
-LIBDIR = ""
+LIBDIR = "__LIBDIR__"
 sys.path.append(LIBDIR)
 
 import config
@@ -47,34 +60,63 @@ def usage(message=None):
     print __doc__
 
 
-def process(arg):
-    """process(arg)
-    processes the command line opts and calls the appropriate procedure.
+def load_index(regen=False):
+    """load_index()
+    loads archive_list instance from file.  if the file doesn't exists, the
+    archive_list instance is created and saved to disk.  if regen is set to
+    True, archive_list is reinstantiated.
+    retval: archive_list
     """
+    if regen or not os.path.exists(config.INDEX_FILE):
+        x = archive_list.archive_list(config.NODE_LIST, config.SIZE_LIMIT)
+        pickle.dump(x, file(config.INDEX_FILE, "w"))
+    else:
+        x = pickle.load(file(config.INDEX_FILE))
+    return x
 
-
+    
 def regen():
     utils.vprint("regen()")
+    load_index(True)
 
 
 def list():
     utils.vprint("list()")
+    alist = load_index()
+    print alist
 
 
 def create():
     utils.vprint("create()")
+    alist = load_index()
 
 
 def version():
     utils.vprint("version()")
-    asdf
+    print "splitter version: %s" % config.VERSION
 
 
 #---------------------- main --------------------------#
 
 # parse command line args
 try:
-    opts, args = getopt.gnu_getopt(sys.argv[1:], 'rlcv', ['verbose', 'wait='])
+    # fix up our "optional" arguments
+    argv = sys.argv[1:]
+    #print argv
+    while '--list' in argv:
+        argv.remove('--list')
+        argv.append('--list=all')
+    while '--create' in argv:
+        argv.remove('--create')
+        argv.append('--create=all')
+    #print argv
+    opts, args = getopt.gnu_getopt(argv,
+                                   'v',
+                                   ['verbose',
+                                    'regen',
+                                    'list=',
+                                    'create=',
+                                    'wait='])
     while ('--verbose', '') in opts:
         config.VERBOSE = True
         opts.remove(('--verbose', ''))
@@ -101,9 +143,9 @@ except Exception, e:
 # create an associative array of the command line switches and their
 # corresponding procedures
 function_table = { \
-    '-r': regen, \
-    '-l': list, \
-    '-c': create, \
+    '--regen': regen, \
+    '--list': list, \
+    '--create': create, \
     '-v': version, \
     }
 
@@ -115,13 +157,3 @@ except Exception, e:
 
 #and we exit successfully
 sys.exit(0)
-
-
-
-print "splitter %s" % SPLITTER_VER
-
-print "node_list: %s" % NODE_LIST
-print "size_limit: %s (%d bytes)" % (translate_size(SIZE_LIMIT), SIZE_LIMIT)
-
-x = archive_list(NODE_LIST, SIZE_LIMIT)
-print x

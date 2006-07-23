@@ -18,27 +18,6 @@ def vprint(list):
     print list
 
 
-def getsize(node):
-    """getsize(node)
-    returns the size in bytes of the provided fs node.  this version of getsize
-    ignores symlinks and is recursive
-    """
-    #print "getsize(node=%s)" % (node)
-    if os.path.islink(node):
-        #print "** link **"
-        return 0
-    elif os.path.isdir(node):
-        #print "** dir **"
-        retval = 0
-        for x in os.listdir(node):
-            retval += getsize(os.path.join(node, x))
-        retval += os.path.getsize(node)
-        return retval
-    else:
-        #print "** file **"
-        return os.path.getsize(node)
-
-
 def translate_size(bytes):
     """translate_size(bytes)
     returns human readable size (e.g., 1K, 234M, 2G)

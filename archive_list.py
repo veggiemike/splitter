@@ -1,3 +1,15 @@
+"""archive_list -
+the workhorse of the Splitter Backup System
+"""
+
+import os
+import os.path
+import string
+
+import config
+import utils
+
+
 class archive:
     """archive
     data type used by archive_list
@@ -9,14 +21,14 @@ class archive:
     
     def __str__(self):
         return "archive, %d files, %s" % (len(self.files),
-                                          translate_size(self.size))
+                                          utils.translate_size(self.size))
     
     
     def info(self):
         retval = []
         retval.append("--- archive ---")
         retval.append("files: %s" % self.files)
-        retval.append("size: %s" % translate_size(self.size))
+        retval.append("size: %s" % utils.translate_size(self.size))
         retval.append("---------------")
         return string.join(retval, "\n")
         
@@ -43,8 +55,8 @@ class archive_list:
         retval.append("archives: %d" % len(self.list))
         for x in self.list:
             retval.append("%s" % x)
-            retval[-1] += ", %s remaining" % (translate_size(self.maxsize
-                                                             - x.size))
+            retval[-1] += ", %s remaining" % (utils.translate_size(self.maxsize
+                                                                   - x.size))
         retval.append("------------------------")
         return string.join(retval, "\n")
     
