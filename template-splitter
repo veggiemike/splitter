@@ -41,7 +41,7 @@ import sys
 import os
 import os.path
 import getopt
-import pickle
+import cPickle
 
 LIBDIR = "__LIBDIR__"
 sys.path.append(LIBDIR)
@@ -60,35 +60,42 @@ def usage(message=None):
     print __doc__
 
 
-def load_index(regen=False):
+def load_index():
     """load_index()
     loads archive_list instance from file.  if the file doesn't exists, the
     archive_list instance is created and saved to disk.  if regen is set to
     True, archive_list is reinstantiated.
     retval: archive_list
     """
-    if regen or not os.path.exists(config.INDEX_FILE):
+    if config.REGEN or not os.path.exists(config.INDEX_FILE):
         x = archive_list.archive_list(config.NODE_LIST, config.SIZE_LIMIT)
-        pickle.dump(x, file(config.INDEX_FILE, "w"))
+        cPickle.dump(x, file(config.INDEX_FILE, "w"))
     else:
-        x = pickle.load(file(config.INDEX_FILE))
+        x = cPickle.load(file(config.INDEX_FILE))
     return x
 
     
-def regen():
-    utils.vprint("regen()")
-    load_index(True)
+#def regen():
+#    utils.vprint("regen()")
+#    load_index()
 
 
-def list():
+def list(arg):
     utils.vprint("list()")
     alist = load_index()
-    print alist
+    if arg == 'all':
+        print alist
+    else:
+        print alist[int(arg)]
 
 
-def create():
+def create(arg):
     utils.vprint("create()")
     alist = load_index()
+    if arg == 'all':
+        alist.create()
+    else:
+        alist[int(arg)].create()
 
 
 def version():
@@ -98,18 +105,26 @@ def version():
 
 #---------------------- main --------------------------#
 
+argv = sys.argv[1:]
+print argv
+# take care of -v requests and exit
+if '-v' in argv:
+    version()
+    sys.exit(0)
+
 # parse command line args
 try:
     # fix up our "optional" arguments
-    argv = sys.argv[1:]
-    #print argv
+    while '--wait' in argv:
+        argv.remove('--wait')
+        argv.append('--wait=1')
     while '--list' in argv:
         argv.remove('--list')
         argv.append('--list=all')
     while '--create' in argv:
         argv.remove('--create')
         argv.append('--create=all')
-    #print argv
+    print argv
     opts, args = getopt.gnu_getopt(argv,
                                    'v',
                                    ['verbose',
@@ -120,6 +135,9 @@ try:
     while ('--verbose', '') in opts:
         config.VERBOSE = True
         opts.remove(('--verbose', ''))
+    while ('--regen', '') in opts:
+        config.REGEN = True
+        opts.remove(('--regen', ''))
     for x in opts[:]:
         if x[0] == '--wait':
             if int(x[1]) < 0:
@@ -128,6 +146,7 @@ try:
             opts.remove(x)
     
     utils.vprint("VERBOSE: %s" % config.VERBOSE)
+    utils.vprint("REGEN: %s" % config.REGEN)
     utils.vprint("WAIT: %s" % config.WAIT)
     utils.vprint("opts: %s" % opts)
     utils.vprint("args: %s" % args)
@@ -143,14 +162,13 @@ except Exception, e:
 # create an associative array of the command line switches and their
 # corresponding procedures
 function_table = { \
-    '--regen': regen, \
     '--list': list, \
     '--create': create, \
     '-v': version, \
     }
 
 try:
-    function_table[opts[0][0]]()
+    function_table[opts[0][0]](opts[0][1])
 except Exception, e:
     print "ERROR: mode routine failed: %s" % e
     sys.exit(1)
