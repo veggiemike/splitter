@@ -41,6 +41,7 @@ MAN = 	splitter.8
 # constructs.
 SIZE_LIMIT = 2**31
 INDEX_FILE = "index.db"
+INDEX_FILE_TTL = 3600
 NODE_LIST = ['/scrap', '/home']
 
 
@@ -60,11 +61,13 @@ config.py: template-config.py ${MAKEFILE}
 	@echo "SIZE_LIMIT: ${SIZE_LIMIT}"
 	@echo "LIBDIR: ${LIBDIR}"
 	@echo "INDEX_FILE: ${INDEX_FILE}"
+	@echo "INDEX_FILE_TTL: ${INDEX_FILE_TTL}"
 	@echo "NODE_LIST: ${NODE_LIST}"
 	sed "s|__VERSION__|${VERSIONSTRING}|" template-config.py > config.py
 	sed -i "s|__SIZE_LIMIT__|${SIZE_LIMIT}|" config.py
 	sed -i "s|__LIBDIR__|${LIBDIR}|" config.py
 	sed -i "s|__INDEX_FILE__|${INDEX_FILE}|" config.py
+	sed -i "s|__INDEX_FILE_TTL__|${INDEX_FILE_TTL}|" config.py
 	sed -i "s|__NODE_LIST__|${NODE_LIST}|" config.py
 
 ${MAN}.gz: template-${MAN}
