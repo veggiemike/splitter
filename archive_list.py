@@ -14,21 +14,27 @@ class archive:
     """archive
     data type used by archive_list
     """
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.files = []
         self.size = 0
     
     
     def __str__(self):
-        return "archive, %d files, %s" % (len(self.files),
-                                          utils.translate_size(self.size))
+        return "archive '%s', %d files, %s" % (self.name,
+                                               len(self.files),
+                                               utils.translate_size(self.size))
     
     
     def info(self):
         retval = []
         retval.append("--- archive ---")
-        retval.append("files: %s" % self.files)
+        retval.append("name: %s" % self.name)
+        retval.append("files: %d" % len(self.files))
         retval.append("size: %s" % utils.translate_size(self.size))
+        retval.append("listing:")
+        for x in self.files:
+            retval.append("  %s" % x)
         retval.append("---------------")
         return string.join(retval, "\n")
         
@@ -42,7 +48,7 @@ class archive_list:
     def __init__(self, node_list, maxsize):
         self.node_list = node_list
         self.maxsize = maxsize
-        self.list = [archive()]
+        self.list = [archive("1")]
         for x in node_list:
             self.splitter(x)
     
@@ -60,6 +66,10 @@ class archive_list:
         retval.append("------------------------")
         return string.join(retval, "\n")
     
+
+    def __getitem__(self, i):
+        return self.list[i]
+
     
     def splitter(self, node):
         """splitter(node)
@@ -96,6 +106,6 @@ class archive_list:
             print "WARNING: file bigger than maxsize: %s" % node
             return
         elif self.list[-1].size + s > self.maxsize:
-            self.list.append(archive())
+            self.list.append(archive(int(self.list[-1].name) + 1))
         self.list[-1].files.append(node)
         self.list[-1].size += s

@@ -86,7 +86,7 @@ def list(arg):
     if arg == 'all':
         print alist
     else:
-        print alist[int(arg)]
+        print alist[int(arg) - 1].info()
 
 
 def create(arg):
