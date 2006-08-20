@@ -5,6 +5,7 @@ the workhorse of the Splitter Backup System
 import os
 import os.path
 import string
+import tarfile
 
 import config
 import utils
@@ -43,7 +44,21 @@ class archive:
         """create()
         this function actually creates the archive file on disk
         """
+        if not os.path.isdir(config.WRITE_DIR):
+            os.makedirs(config.WRITE_DIR)
+
+        name = os.path.join(config.WRITE_DIR,
+                            "splitter-%s.tar" % self.name)
         
+        print "creating: %s" % name
+        f = tarfile.open(name, "w")
+        f.posix = False
+
+        for x in self.files:
+            utils.vprint("  adding: %s" % x)
+            f.add(x, recursive=False)
+
+        f.close()
 
 
 class archive_list:
@@ -128,5 +143,5 @@ class archive_list:
             if counter == 0 != config.WAIT:
                 raw_input("press Enter to continue...")
                 counter = config.WAIT
-            print "writing: %s" % x
+            x.create()
             counter -= 1

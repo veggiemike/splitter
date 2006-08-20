@@ -24,7 +24,8 @@ PYTHON=`./python-test`
 
 PREFIX = /usr
 BINDIR = ${PREFIX}/bin
-LIBDIR = ${PREFIX}/lib/splitter
+#LIBDIR = ${PREFIX}/lib/splitter
+LIBDIR = ""
 MANDIR = ${PREFIX}/share/man/man8
 
 
@@ -42,7 +43,9 @@ MAN = 	splitter.8
 SIZE_LIMIT = 2**31
 INDEX_FILE = "index.db"
 INDEX_FILE_TTL = 3600
-NODE_LIST = ['/scrap', '/home']
+WRITE_DIR = "/tmp/splitter"
+#NODE_LIST = ['/scrap', '/home']
+NODE_LIST = ['/scrap/photos', '/home']
 
 
 all: ${BIN} ${LIBS} #${MAN}.gz
@@ -62,12 +65,14 @@ config.py: template-config.py ${MAKEFILE}
 	@echo "LIBDIR: ${LIBDIR}"
 	@echo "INDEX_FILE: ${INDEX_FILE}"
 	@echo "INDEX_FILE_TTL: ${INDEX_FILE_TTL}"
+	@echo "WRITE_DIR: ${WRITE_DIR}"
 	@echo "NODE_LIST: ${NODE_LIST}"
 	sed "s|__VERSION__|${VERSIONSTRING}|" template-config.py > config.py
 	sed -i "s|__SIZE_LIMIT__|${SIZE_LIMIT}|" config.py
 	sed -i "s|__LIBDIR__|${LIBDIR}|" config.py
 	sed -i "s|__INDEX_FILE__|${INDEX_FILE}|" config.py
 	sed -i "s|__INDEX_FILE_TTL__|${INDEX_FILE_TTL}|" config.py
+	sed -i "s|__WRITE_DIR__|${WRITE_DIR}|" config.py
 	sed -i "s|__NODE_LIST__|${NODE_LIST}|" config.py
 
 ${MAN}.gz: template-${MAN}
