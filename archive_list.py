@@ -4,6 +4,7 @@ the workhorse of the Splitter Backup System
 
 import os
 import os.path
+import stat
 import string
 import tarfile
 
@@ -109,19 +110,16 @@ class archive_list:
             print "WARNING: file not readable: %s" % node
             return
         
-        if os.path.islink(node):
-            #print "** link **"
-            self.list[-1].files.append(node)
-            # don't increase size
-            return
-        elif os.path.isdir(node):
+        if os.path.isdir(node):
             #print "** dir **"
             for x in os.listdir(node):
                 self.splitter(os.path.join(node, x))
-        #else:
-        #    print "** file **"
-        
-        s = os.path.getsize(node)
+
+        # size in a tar file is actually:
+        #  512 header + size, rounded up to nearest mult of 512
+        s = 512
+        s += os.lstat(node)[stat.ST_SIZE]
+        s += 512 - (s % 512)
         #print "s: %d" % s
         if s > self.maxsize:
             print "WARNING: file bigger than maxsize: %s" % node
