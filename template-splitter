@@ -75,11 +75,6 @@ def load_index():
     return x
 
     
-#def regen():
-#    utils.vprint("regen()")
-#    load_index()
-
-
 def list(arg):
     utils.vprint("list()")
     alist = load_index()
@@ -142,7 +137,7 @@ try:
         if x[0] == '--wait':
             if int(x[1]) < 0:
                 raise Exception("option --wait requires positive argument")
-            config.WAIT = x[1]
+            config.WAIT = int(x[1])
             opts.remove(x)
     
     utils.vprint("VERBOSE: %s" % config.VERBOSE)

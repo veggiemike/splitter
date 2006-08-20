@@ -37,6 +37,12 @@ class archive:
             retval.append("  %s" % x)
         retval.append("---------------")
         return string.join(retval, "\n")
+
+
+    def create(self):
+        """create()
+        this function actually creates the archive file on disk
+        """
         
 
 
@@ -109,3 +115,18 @@ class archive_list:
             self.list.append(archive(int(self.list[-1].name) + 1))
         self.list[-1].files.append(node)
         self.list[-1].size += s
+
+
+    def create(self):
+        """create()
+        this function iterates over the list of archives, calling the create()
+        member function of each.  it waits, if necesary, according to the
+        config.WAIT variable.
+        """
+        counter = config.WAIT
+        for x in self.list:
+            if counter == 0 != config.WAIT:
+                raw_input("press Enter to continue...")
+                counter = config.WAIT
+            print "writing: %s" % x
+            counter -= 1
