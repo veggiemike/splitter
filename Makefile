@@ -90,14 +90,14 @@ ${MAN}.gz: template-${MAN}
 	sed "s|FILL_ME_IN_CONFIG|${LIBDIR}/config.py|" template-${MAN} > ${MAN}
 	gzip -f ${MAN}
 
-install: ${BIN} ${LIBS} ${MAN}.gz
+install: ${BIN} ${LIBS} #${MAN}.gz
 	mkdir -p ${PREFIX}
 	mkdir -p ${BINDIR}
 	mkdir -p ${LIBDIR}
-	mkdir -p ${MANDIR}
+#	mkdir -p ${MANDIR}
 	install -D ${BIN} ${BINDIR}/${BIN}
 	cp ${LIBS} ${LIBDIR}
-	cp ${MAN}.gz ${MANDIR}
+#	cp ${MAN}.gz ${MANDIR}
 
 install-docs:
 	mkdir -p ${DOCDIR}
