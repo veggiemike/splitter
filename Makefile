@@ -24,8 +24,7 @@ PYTHON=`./python-test`
 
 PREFIX = /usr
 BINDIR = ${PREFIX}/bin
-#LIBDIR = ${PREFIX}/lib/splitter
-LIBDIR = ""
+LIBDIR = ${PREFIX}/lib/splitter
 MANDIR = ${PREFIX}/share/man/man8
 
 
@@ -44,8 +43,9 @@ SIZE_LIMIT = 2**31
 INDEX_FILE = "index.db"
 INDEX_FILE_TTL = 3600
 WRITE_DIR = "/tmp/splitter"
-#NODE_LIST = ['/scrap', '/home']
-NODE_LIST = ['/scrap/photos', '/home']
+NODE_LIST = ['/scrap', '/home']
+#NODE_LIST = ['/scrap/photos', '/home']
+#NODE_LIST = ['/home/mike/t']
 
 
 all: ${BIN} ${LIBS} #${MAN}.gz
