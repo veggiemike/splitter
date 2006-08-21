@@ -4,7 +4,6 @@ the workhorse of the Splitter Backup System
 
 import os
 import os.path
-import stat
 import string
 import tarfile
 
@@ -19,13 +18,15 @@ class archive:
     def __init__(self, name):
         self.name = name
         self.files = []
-        self.size = 0
+        # tar files end with two 512 byte blocks of zeros
+        self.size = 1024
     
     
     def __str__(self):
-        return "archive '%s', %d files, %s" % (self.name,
-                                               len(self.files),
-                                               utils.translate_size(self.size))
+        buf = "archive '%s'" % self.name
+        buf += ", %d files" % len(self.files)
+        buf += ", %d (%s)" % (self.size, utils.translate_size(self.size))
+        return buf
     
     
     def info(self):
@@ -33,7 +34,8 @@ class archive:
         retval.append("--- archive ---")
         retval.append("name: %s" % self.name)
         retval.append("files: %d" % len(self.files))
-        retval.append("size: %s" % utils.translate_size(self.size))
+        retval.append("size: %d bytes (%s)" %
+                      (self.size, utils.translate_size(self.size)))
         retval.append("listing:")
         for x in self.files:
             retval.append("  %s" % x)
@@ -56,7 +58,8 @@ class archive:
         f.posix = False
 
         for x in self.files:
-            utils.vprint("  adding: %s" % x)
+            utils.vprint("  adding: %s (%d bytes)"
+                         % (x, utils.get_size_in_tar(x)))
             f.add(x, recursive=False)
 
         f.close()
@@ -73,6 +76,8 @@ class archive_list:
         self.list = [archive("1")]
         for x in node_list:
             self.splitter(x)
+        # finalize the last archive
+        self.list[-1].size = utils.get_size_of_tar(self.list[-1].size)
     
     
     def __str__(self):
@@ -110,21 +115,26 @@ class archive_list:
             print "WARNING: file not readable: %s" % node
             return
         
-        if os.path.isdir(node):
+        if os.path.isdir(node) and not os.path.islink(node):
             #print "** dir **"
             for x in os.listdir(node):
                 self.splitter(os.path.join(node, x))
 
         # size in a tar file is actually:
         #  512 header + size, rounded up to nearest mult of 512
-        s = 512
-        s += os.lstat(node)[stat.ST_SIZE]
-        s += 512 - (s % 512)
-        #print "s: %d" % s
+        #s = 512
+        #s += os.lstat(node)[stat.ST_SIZE]
+        #s += 512 - (s % 512)
+        #s = utils.tarsize(node)
+        s = utils.get_size_in_tar(node)
+        utils.vprint("adding: %s (%d bytes)" % (node, s))
         if s > self.maxsize:
             print "WARNING: file bigger than maxsize: %s" % node
             return
-        elif self.list[-1].size + s > self.maxsize:
+        elif utils.get_size_of_tar(self.list[-1].size + s) > self.maxsize:
+            # finalize archive
+            self.list[-1].size = utils.get_size_of_tar(self.list[-1].size)
+            # create new archive to add files to
             self.list.append(archive(int(self.list[-1].name) + 1))
         self.list[-1].files.append(node)
         self.list[-1].size += s
