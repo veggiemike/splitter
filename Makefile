@@ -26,6 +26,7 @@ PREFIX = /usr
 BINDIR = ${PREFIX}/bin
 LIBDIR = ${PREFIX}/lib/splitter
 MANDIR = ${PREFIX}/share/man/man8
+DOCDIR = ${PREFIX}/share/doc/${PRODUCT}-${VERSIONSTRING}
 
 
 BIN =	splitter
@@ -33,6 +34,16 @@ BIN =	splitter
 LIBS =	config.py \
 	archive_list.py \
 	utils.py
+
+DOCS =	AUTHORS \
+	BUGS \
+	BUGS-SQUASHED \
+	COPYING \
+	ChangeLog \
+	INSTALL \
+	NEWS \
+	README \
+	TODO
 
 MAN = 	splitter.8
 
@@ -87,6 +98,10 @@ install: ${BIN} ${LIBS} ${MAN}.gz
 	install -D ${BIN} ${BINDIR}/${BIN}
 	cp ${LIBS} ${LIBDIR}
 	cp ${MAN}.gz ${MANDIR}
+
+install-docs:
+	mkdir -p ${DOCDIR}
+	cp ${DOCS} ${DOCDIR}
 
 dist: dist-bzip2
 

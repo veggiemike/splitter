@@ -6,10 +6,9 @@ planned features
 
 
 ## 0.9.0
-- command line options using getopt
+- config file (using ConfigParser or a .py file)
+- man page
 
 
 ## 1.0.0
-- config file (using ConfigParser or a .py file)
-
-
+- add command line arg to actually create iso files

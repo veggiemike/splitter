@@ -1,0 +1,25 @@
+srp
+__DISTNAME__.tar.bz2
+__DISTNAME__
+the splitter backup system
+SRP_NO_COMPILE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+SRP_NONE
+make PREFIX=/usr &&
+make PREFIX=$SRP_ROOT/usr install &&
+make PREFIX=$SRP_ROOT/usr install-docs
