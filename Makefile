@@ -3,7 +3,7 @@ MAKEFILE = Makefile
 PRODUCT	      =	splitter
 VERSION	      =	0.8.0
 PACKAGEREV    =	1
-DEVTAG	      =	pre
+DEVTAG	      =	
 DEVDATE	      =	`date +"%Y%m%d"`
 
 ifeq (${DEVTAG},)
